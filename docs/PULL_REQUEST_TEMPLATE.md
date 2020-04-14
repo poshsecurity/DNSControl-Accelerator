@@ -6,6 +6,7 @@
   * [ ] Checked you have used single quotes.
   * [ ] Confirmed there are no dangling DNS entries.
   * [ ] Confirmed any ```SPF``` changes do not violate the DNS request limits.
+  * [ ] Confirmed you haven't checked in any secrets in ```creds.json```.
 
 ### Description of the Change
 
