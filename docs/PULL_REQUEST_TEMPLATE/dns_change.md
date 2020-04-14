@@ -1,3 +1,8 @@
+---
+name: DNS Change
+about: Changing a DNS Entry
+---
+
 ### Requirements
 
 * This template is required. Any request that does not include enough information may be closed at the maintainers' discretion.
