@@ -1,0 +1,5 @@
+{
+  "dnsimple": {
+    "token": "#{your-dnsimple-account-access-token}#"
+  }
+}
