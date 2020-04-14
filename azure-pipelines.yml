@@ -1,0 +1,91 @@
+trigger:
+- master
+
+variables:
+  - group: keyvault_variables
+
+stages:
+
+- stage: build
+  jobs:
+
+  - job: check_and_preview
+    displayName: 'Run DNSControl check and preview'
+    pool:
+      vmImage: ubuntu-16.04
+    steps:
+    - checkout: self
+      persistCredentials: true
+      clean: true
+    - task: replacetokens@3
+      displayName: 'Replace variables in files'
+      inputs:
+        targetFiles: |
+          creds.json
+          dnsconfig.js
+        encoding: 'auto'
+        writeBOM: true
+        actionOnMissing: 'fail'
+        keepToken: false
+        tokenPrefix: '#{'
+        tokenSuffix: '}#'
+    - task: Docker@1
+      displayName: 'Run DNSControl Check'
+      inputs:
+        containerregistrytype: 'Container Registry'
+        command: 'Run an image'
+        imageName: stackexchange/dnscontrol
+        qualifyImageName: false
+        volumes: '$(System.DefaultWorkingDirectory)/:/dns'
+        containerCommand: 'dnscontrol check'
+        runInBackground: false
+    - task: Docker@1
+      displayName: 'Run DNSControl Preview'
+      inputs:
+        containerregistrytype: 'Container Registry'
+        command: 'Run an image'
+        imageName: stackexchange/dnscontrol
+        qualifyImageName: false
+        volumes: '$(System.DefaultWorkingDirectory)/:/dns'
+        containerCommand: 'dnscontrol preview'
+        runInBackground: false
+    - powershell: |
+        $spfcachepath = "$(System.DefaultWorkingDirectory)/spfcache.updated.json"
+        if (test-path $spfcachepath) {
+          move-item "$(System.DefaultWorkingDirectory)/spfcache.updated.json" "$(System.DefaultWorkingDirectory)/spfcache.json" -Force
+          git config user.email "$(email)"
+          git config user.name "$(name)"
+          git add spfcache.json
+          git commit -m "Updated spfcache.json ***NO_CI***"
+          if (('$(Build.Repository.Uri)').contains('github')) {
+            # If GitHub, need PAT etc
+            git push https://$(Github-pat)@github.com/$(Github-org)/$(Github-repo).git HEAD:master
+          } else {
+            git push origin HEAD:master
+          }
+        }
+      workingDirectory: '$(System.DefaultWorkingDirectory)'
+      displayName: 'Commit spfcache.json back'
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+
+- stage: release
+  dependsOn: build
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+
+  jobs:
+
+  - job: push
+    displayName: 'Run DNSControl push'
+    pool:
+      vmImage: ubuntu-16.04
+    steps:
+    - task: Docker@1
+      displayName: 'Run DNSControl push'
+      inputs:
+        containerregistrytype: 'Container Registry'
+        command: 'Run an image'
+        imageName: stackexchange/dnscontrol
+        qualifyImageName: false
+        volumes: '$(System.DefaultWorkingDirectory)/:/dns'
+        containerCommand: 'dnscontrol push'
+        runInBackground: false
