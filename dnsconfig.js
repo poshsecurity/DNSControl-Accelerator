@@ -3,6 +3,9 @@
 // require('util/google_suite.js');
 // require('util/office365.js');
 
+// Common TTL periods
+require('util/ttl.js');
+
 // Domain Registrars
 var REG_DNSIMPLE = NewRegistrar("dnsimple", "DNSIMPLE");
 
@@ -35,11 +38,11 @@ D('mydomain.com', REG_DNSIMPLE, DnsProvider(DNS_DNSIMPLE),
       // 'include:sent-via.netsuite.com',      // NetSuite
       '-all' // Servers not compliant with SPF will fail and be rejected
     ],
-    ttl: TTL('1h')
+    ttl: one_hour
   }),
 
   // DMARC Policy, reject any messages that fail DMARC checks. Keep even if no email sent.
-  TXT('_dmarc', 'v=DMARC1; p=reject; pct=100;'),
+  TXT('_dmarc', 'v=DMARC1; p=reject; pct=100;', one_hour),
 
   // Domain uses Office 365 so call the record builder function.
   // Office365Records('mydomain.com', 'ms123456', 'mydomain'),
@@ -48,5 +51,5 @@ D('mydomain.com', REG_DNSIMPLE, DnsProvider(DNS_DNSIMPLE),
   // GoogleSuiteRecords(),
 
   // Test entry
-  TXT('testentry', 'Hello World')
+  TXT('testentry', 'Hello World', five_minutes)
 );
