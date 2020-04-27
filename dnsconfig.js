@@ -50,6 +50,46 @@ D('mydomain.com', REG_DNSIMPLE, DnsProvider(DNS_DNSIMPLE),
   // Domain uses Google Suite
   // GoogleSuiteRecords(),
 
+  /*
+    MTA-STS (See: https://scotthelme.co.uk/improving-email-security-with-mta-sts/)
+
+    Uncomment these lines if you wish to configure MTA-STS and reporting
+  */
+  // TXT('_mta-sts', 'v=STSv1; id=1565808194', one_hour),
+  // TXT('_smtp._tls', 'v=TLSRPTv1;rua=mailto:{subdomain}-d@tlsrpt.report-uri.com', one_hour),
+
+  /*
+    CAA Record (See: https://stackexchange.github.io/dnscontrol/caa-builder)
+
+    Do not define anything except iodef if you are running on CloudFlare.
+  */
+  /*
+  CAA_BUILDER({
+    label: '@',
+    iodef: 'mailto:test@domain.tld',
+    iodef_critical: true,
+    issue: [
+      'letsencrypt.org',
+      'comodoca.com',
+      'sectigo.com', //I think we only need this one and not comodoca.com
+      'quovadisglobal.com',
+      'digicert.com'
+    ],
+    issuewild: [
+      'letsencrypt.org',
+      'comodoca.com',
+      'sectigo.com', //I think we only need this one and not comodoca.com
+      'quovadisglobal.com',
+      'digicert.com'
+    ],
+    ttl: one_hour
+  })
+  */
+
+  // AUTODNSSEC indicates that the DNS provider can automatically manage DNSSEC for a domain and we should ask it to do so.
+  // See: https://stackexchange.github.io/dnscontrol/js
+  // AUTODNSSEC,
+
   // Test entry
   TXT('testentry', 'Hello World', five_minutes)
 );
