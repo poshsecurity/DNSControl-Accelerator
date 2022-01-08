@@ -41,8 +41,17 @@ D('mydomain.com', REG_DNSIMPLE, DnsProvider(DNS_DNSIMPLE),
     ttl: one_hour
   }),
 
-  // DMARC Policy, reject any messages that fail DMARC checks. Keep even if no email sent.
-  TXT('_dmarc', 'v=DMARC1; p=reject; pct=100;', one_hour),
+  /*
+    DMARC Policy
+
+    This uses the DMARC Builder as described here - https://stackexchange.github.io/dnscontrol/js#DMARC_Builder
+    
+    Keep this even if no email is sent from this domain. If no email, ensure policy is reject.
+  */
+  DMARC_BUILDER({
+    policy: 'reject',
+    ttl: one_hour
+  }),
 
   // Domain uses Office 365 so call the record builder function.
   // Office365Records('mydomain.com', 'ms123456', 'mydomain'),
