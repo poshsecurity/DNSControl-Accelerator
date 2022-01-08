@@ -49,6 +49,7 @@ D('mydomain.com', REG_DNSIMPLE, DnsProvider(DNS_DNSIMPLE),
     Keep this even if no email is sent from this domain. If no email, ensure policy is reject.
   */
   DMARC_BUILDER({
+    label: "@",
     policy: 'reject',
     ttl: one_hour
   }),
