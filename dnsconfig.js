@@ -93,7 +93,7 @@ D('mydomain.com', REG_DNSIMPLE, DnsProvider(DNS_DNSIMPLE),
       'digicert.com'
     ],
     ttl: one_hour
-  })
+  }),
   */
 
   // AUTODNSSEC indicates that the DNS provider can automatically manage DNSSEC for a domain and we should ask it to do so.
