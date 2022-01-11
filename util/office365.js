@@ -1,7 +1,7 @@
 function Office365Records(domain_name, domain_identifier, onmicrosoft_domain) {
   var domain_name_dashed = domain_name.split('.').join('-');
-  var dkim1_record = 'selector1.{replace1}._domainkey.{replace2}.onmicrosoft.com.'.replace('{replace1}', domain_name_dashed).replace('{replace2}', onmicrosoft_domain);
-  var dkim2_record = 'selector2.{replace1}._domainkey.{replace2}.onmicrosoft.com.'.replace('{replace1}', domain_name_dashed).replace('{replace2}', onmicrosoft_domain);
+  var dkim1_record = 'selector1-{replace1}._domainkey.{replace2}.onmicrosoft.com.'.replace('{replace1}', domain_name_dashed).replace('{replace2}', onmicrosoft_domain);
+  var dkim2_record = 'selector2-{replace1}._domainkey.{replace2}.onmicrosoft.com.'.replace('{replace1}', domain_name_dashed).replace('{replace2}', onmicrosoft_domain);
 
   return [
     TXT('@', 'MS='.concat(domain_identifier), one_hour),
